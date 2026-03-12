@@ -1,8 +1,8 @@
-# 🌬️AirAware — India AQI Dashboard
+# 🌬️ AirAware — India AQI Dashboard
 
 A comprehensive **Air Quality Index (AQI) monitoring web application** for Indian cities. Built with Flask, AirAware provides pollutant data, weather information, an interactive map, AQI-related news, and an AI-powered chatbot — all wrapped in a modern, animated UI.
-    
----   
+
+---
 
 ## ✨ Features
 
@@ -93,39 +93,41 @@ A comprehensive **Air Quality Index (AQI) monitoring web application** for India
 ```
 AirAware/
 ├── app.py
+├── config.py
 ├── requirements.txt
-├── README.md
+├── .env                  # Environment configurations
 │
-├── data/
-│   └── states_cities.json
+├── data/                 # JSON datasets
+│   └── cities.json
 │
-├── model/
+├── chatbot/              # ML Models and configs
 │   ├── intents.json
-│   ├── train_model.py
-│   ├── chatbot_model.pkl
+│   ├── train.py
+│   ├── model.pkl
 │   └── vectorizer.pkl
 │
-├── utils/
+├── routes/               # Modular Flask routes
+│   ├── __init__.py
+│   ├── api.py
+│   └── main.py
+│
+├── services/             # Core business logic
 │   ├── __init__.py
 │   ├── aqi_calculator.py
+│   ├── chatbot_service.py
 │   ├── data_fetcher.py
 │   └── news_fetcher.py
 │
-├── static/
+├── static/               # CSS, JS, Images
 │   ├── css/style.css
-│   ├── js/main.js
-│   ├── js/maps.js
-│   ├── js/news.js
-│   ├── js/particles.js
-│   └── images/  (all your images)
+│   └── js/
 │
-├── templates/
-│   └── (all .html files)
+├── templates/            # HTML templates
+│   ├── layouts/          # Base templates
+│   ├── components/       # Reusable components
+│   └── pages/            # View specific pages
 │
-└── tests/
-    ├── test_chatbot.py
-    └── test_map_data.py
-
+└── tests/                # Unit tests
 ```
 
 ---
@@ -165,16 +167,20 @@ utils/news_fetcher.py
 python model/train_model.py
 ```
 
-### 5. Run the app
+### 5. Run the app for Development
 
-```
+```bash
 python app.py
 ```
 
-Visit:
+Visit: http://localhost:5000
 
-```
-http://localhost:5000
+### 6. Run the app for Production
+
+Use a WSGI server like `gunicorn` to serve the application in a production environment:
+
+```bash
+gunicorn app:app -b 0.0.0.0:5000
 ```
 
 ---
@@ -238,6 +244,35 @@ This project builds upon several open-source technologies:
 * Google Fonts & Material Symbols — UI assets
 
 Development and refinement were assisted by AI tools such as ChatGPT, Claude, and Gemini. These tools were used strictly as development aids; final design and implementation decisions remain with the project author.
+
+## 🚀 Deployment on Render
+
+Follow these steps to host AirAware on [Render](https://render.com/):
+
+### 1. Prepare your Repository
+Make sure your code is pushed to a GitHub repository. The project already includes:
+- `requirements.txt`: List of dependencies including `gunicorn`.
+- `wsgi.py`: The entry point for the production server.
+- `render.yaml`: Blueprint configuration for Render.
+
+### 2. Connect to Render
+1. Log in to [Render Dashboard](https://dashboard.render.com/).
+2. Click **New +** and select **Blueprint**.
+3. Connect your GitHub repository.
+4. Render will automatically detect the `render.yaml` file and parse the configuration.
+
+### 3. Configure Environment Variables
+In the Render Blueprint setup, you will be prompted to provide values for:
+- `NEWSDATA_API_KEY`: Your NewsData.io API key.
+- `CPCB_API_KEY`: Your Central Pollution Control Board API key.
+
+### 4. Deploy
+1. Click **Apply**.
+2. Render will build and deploy the application.
+3. Once the build is complete, your app will be live at the provided `.onrender.com` URL.
+
+> [!TIP]
+> Use the **Free Tier** for hobby projects. If the app goes to sleep due to inactivity, the first request might take a few seconds to wake it up.
 
 ---
 
