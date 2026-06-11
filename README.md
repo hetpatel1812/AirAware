@@ -1,6 +1,8 @@
 # 🌬️ AirAware — India AQI Dashboard
 
-A comprehensive **Air Quality Index (AQI) monitoring web application** for Indian cities. Built with Flask, AirAware provides pollutant data, weather information, an interactive map, AQI-related news, and an AI-powered chatbot — all wrapped in a modern, animated UI.
+> **🔴 Live App:** [https://airaware-aqi-monitoring-web-application.onrender.com](https://airaware-aqi-monitoring-web-application.onrender.com)
+
+A comprehensive **Air Quality Index (AQI) monitoring web application** for Indian cities. Built with Flask, AirAware provides real-time pollutant data, weather information, an interactive map, AQI-related news, and an AI-powered chatbot — all wrapped in a modern, animated UI.
 
 ---
 
@@ -8,8 +10,8 @@ A comprehensive **Air Quality Index (AQI) monitoring web application** for India
 
 ### 🏠 AQI Dashboard (Home)
 
-* Real-time AQI display with an animated gauge for any Indian city
-* 6-pollutant breakdown: **PM2.5, PM10, NO₂, SO₂, CO, O₃**
+* **Real-time AQI display** with an animated gauge for any Indian city, powered by live data from the **World Air Quality Index (WAQI)** API
+* 6-pollutant breakdown: **PM2.5, PM10, NO₂, SO₂, CO, O₃** with live sub-index values
 * Dominant pollutant detection using CPCB India formula
 * **Cigarette equivalence metric**
   *(Berkeley Earth estimate: 1 cigarette ≈ 22 µg/m³ PM2.5)*
@@ -40,12 +42,12 @@ A comprehensive **Air Quality Index (AQI) monitoring web application** for India
 
 ---
 
-### 🤖 Chatbot — “Namaste Air”
+### 🤖 Chatbot — "Namaste Air"
 
-* Intent-based chatbot trained with TF-IDF + LinearSVC
-* Context-aware responses using city AQI state
-* Natural response delay for conversational feel
-* Click-away auto-close behavior
+* **Powered by Google Gemini API** for intelligent, natural conversations about air quality
+* Context-aware responses using real-time city AQI state
+* Built-in **offline ML fallback** (TF-IDF + LinearSVC) if the API limit is reached
+* Natural response delay and click-away auto-close behavior
 
 ---
 
@@ -77,9 +79,10 @@ A comprehensive **Air Quality Index (AQI) monitoring web application** for India
 | Layer      | Technology                        |
 | ---------- | --------------------------------- |
 | Backend    | Python 3, Flask                   |
-| AQI Data   | City demo dataset fallback        |
+| AQI Data   | **World Air Quality Index (WAQI) API** — live, real-time data |
+| Weather    | OpenWeatherMap API                |
 | News API   | NewsData.io                       |
-| Chatbot ML | scikit-learn (TF-IDF + LinearSVC) |
+| Chatbot AI | **Google Gemini API** (with scikit-learn ML fallback) |
 | Frontend   | HTML, CSS, JavaScript             |
 | Maps       | Leaflet.js                        |
 | Charts     | Chart.js                          |
@@ -155,11 +158,15 @@ pip install scikit-learn
 
 ### 3. API Keys
 
-Configure your NewsData.io API key inside:
+Configure your API keys in the `.env` file (or environment variables):
 
+```env
+WAQI_API_TOKEN=your_openweathermap_api_key
+NEWSDATA_API_KEY=your_newsdata_api_key
+GEMINI_API_KEY=your_google_gemini_api_key
 ```
-utils/news_fetcher.py
-```
+
+> **Note:** AQI data is sourced live from the [World Air Quality Index (WAQI)](https://waqi.info/) API. Get a free token at [https://aqicn.org/data-platform/token/](https://aqicn.org/data-platform/token/).
 
 ### 4. (Optional) Retrain chatbot
 
@@ -177,7 +184,7 @@ Visit: http://localhost:5000
 
 ### 6. Run the app for Production
 
-Use a WSGI server like `gunicorn` to serve the application in a production environment:
+Use a WSGI server like `gunicorn`:
 
 ```bash
 gunicorn app:app -b 0.0.0.0:5000
@@ -241,39 +248,10 @@ This project builds upon several open-source technologies:
 * scikit-learn — machine learning toolkit
 * Leaflet.js — interactive maps
 * Chart.js — visualization engine
+* [World Air Quality Index (WAQI)](https://waqi.info/) — live AQI data source
 * Google Fonts & Material Symbols — UI assets
 
 Development and refinement were assisted by AI tools such as ChatGPT, Claude, and Gemini. These tools were used strictly as development aids; final design and implementation decisions remain with the project author.
-
-## 🚀 Deployment on Render
-
-Follow these steps to host AirAware on [Render](https://render.com/):
-
-### 1. Prepare your Repository
-Make sure your code is pushed to a GitHub repository. The project already includes:
-- `requirements.txt`: List of dependencies including `gunicorn`.
-- `wsgi.py`: The entry point for the production server.
-- `render.yaml`: Blueprint configuration for Render.
-
-### 2. Connect to Render
-1. Log in to [Render Dashboard](https://dashboard.render.com/).
-2. Click **New +** and select **Blueprint**.
-3. Connect your GitHub repository.
-4. Render will automatically detect the `render.yaml` file and parse the configuration.
-
-### 3. Configure Environment Variables
-In the Render Blueprint setup, you will be prompted to provide values for:
-- `WEATHER_API_KEY`: Your OpenWeatherMap API key.
-- `NEWSDATA_API_KEY`: Your NewsData.io API key.
-- `CPCB_API_KEY`: Your Central Pollution Control Board API key.
-
-### 4. Deploy
-1. Click **Apply**.
-2. Render will build and deploy the application.
-3. Once the build is complete, your app will be live at the provided `.onrender.com` URL.
-
-> [!TIP]
-> Use the **Free Tier** for hobby projects. If the app goes to sleep due to inactivity, the first request might take a few seconds to wake it up.
 
 ---
 
@@ -284,7 +262,3 @@ This project is licensed under the **MIT License**.
 You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this software, provided that the original copyright notice and permission notice are included in all copies or substantial portions of the software.
 
 See the `LICENSE` file in this repository for the complete license text.
-
-
-
-
