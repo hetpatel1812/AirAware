@@ -104,13 +104,36 @@ def calculate_aqi(pollutants: dict) -> dict:
     """
     sub_indices = {}
     
+    # Check if these are already AQI values (e.g. from WAQI)
+    is_precalculated = pollutants.pop('is_precalculated_aqi', False)
+    main_aqi = pollutants.pop('main_aqi', None)
+    
     # Calculate sub-index for each pollutant
     for pollutant, concentration in pollutants.items():
         if concentration is not None and concentration >= 0:
-            sub_indices[pollutant] = calculate_sub_index(pollutant, concentration)
+            if is_precalculated:
+                sub_indices[pollutant] = round(concentration)
+            else:
+                sub_indices[pollutant] = calculate_sub_index(pollutant, concentration)
     
-    # Overall AQI is the maximum of all sub-indices
-    if sub_indices:
+    # Overall AQI is the maximum of PM2.5 and PM10 sub-indices
+    # We exclude O3, SO2, NO2, CO from driving the overall AQI because
+    # CPCB requires 8hr/24hr averages for those, and instantaneous 
+    # hourly spikes (like daytime Ozone) artificially inflate the real-time AQI.
+    primary_pollutants = {k: v for k, v in sub_indices.items() if k in ['pm25', 'pm10']}
+    
+    if main_aqi is not None:
+        aqi_value = round(main_aqi)
+        # Try to find dominant pollutant from sub indices
+        if sub_indices:
+            dominant_pollutant = max(sub_indices, key=sub_indices.get)
+        else:
+            dominant_pollutant = None
+    elif primary_pollutants:
+        aqi_value = max(primary_pollutants.values())
+        dominant_pollutant = max(primary_pollutants, key=primary_pollutants.get)
+    elif sub_indices:
+        # Fallback if no PM data is available (rare)
         aqi_value = max(sub_indices.values())
         dominant_pollutant = max(sub_indices, key=sub_indices.get)
     else:

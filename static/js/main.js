@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AirAware Dashboard - Main JavaScript
  * Handles search, charts, and dynamic updates
  */
@@ -417,6 +417,7 @@ const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 
 let userMessage = null; // Variable to store user's message
+let chatHistory = []; // Variable to store conversation history for Gemini
 const inputInitHeight = chatInput.scrollHeight;
 
 
@@ -479,6 +480,7 @@ const generateResponse = async (chatElement) => {
             category: cityData.category
         } : {};
 
+        // Send user message along with history
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -486,6 +488,7 @@ const generateResponse = async (chatElement) => {
             },
             body: JSON.stringify({
                 message: userMessage,
+                history: chatHistory,
                 context: context
             })
         });
@@ -496,10 +499,13 @@ const generateResponse = async (chatElement) => {
 
         const data = await response.json();
 
-        // Simulate thinking delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
         messageElement.textContent = data.response;
+        
+        // Append to history if successful (Gemini format)
+        if (data.tag !== 'error') {
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            chatHistory.push({ role: "model", parts: [{ text: data.response }] });
+        }
     } catch (error) {
         console.error('Chatbot error:', error);
         messageElement.classList.add("error");

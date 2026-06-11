@@ -1,6 +1,8 @@
 """
 Data fetcher for AQI and weather data.
-Uses demo data for air quality and OpenWeatherMap for weather.
+Uses WAQI ground-station live data for air quality,
+falls back to demo data if the API is unavailable.
+OpenWeatherMap is used for weather (requires API key).
 """
 import os
 import time
@@ -35,16 +37,29 @@ def set_cache(cache_key: str, data):
 
 def get_all_cities_aqi(all_cities_list: list) -> list:
     """
-    Get AQI data for all cities using demo data.
+    Get AQI data for all cities.
+    Uses concurrent live data from WAQI (World Air Quality Index),
+    falls back to demo data for any city where live data is unavailable.
     """
     from services.aqi_calculator import calculate_aqi
+    from services.live_aqi_service import fetch_live_aqi_batch
+
+    # Batch fetch live data for all cities at once
+    live_data = fetch_live_aqi_batch(all_cities_list)
 
     results = []
 
-    for city_info in all_cities_list:
+    for i, city_info in enumerate(all_cities_list):
         city_name = city_info['name']
+        lat = city_info.get('lat')
+        lng = city_info.get('lng')
 
-        pollutants = get_demo_aqi_data(city_name)
+        # Use live data if available, otherwise fall back to demo
+        pollutants = live_data.get(i)
+        is_live = pollutants is not None
+
+        if not pollutants:
+            pollutants = get_demo_aqi_data(city_name)
 
         # Calculate AQI
         aqi_result = calculate_aqi(pollutants)
@@ -53,12 +68,12 @@ def get_all_cities_aqi(all_cities_list: list) -> list:
             'name': city_name,
             'slug': city_info['slug'],
             'state': city_info['state'],
-            'lat': city_info.get('lat'),
-            'lng': city_info.get('lng'),
+            'lat': lat,
+            'lng': lng,
             'aqi': aqi_result['aqi'],
             'category': aqi_result['category'],
             'color': aqi_result['color'],
-            'is_demo': True
+            'is_demo': not is_live
         })
 
     return results
@@ -409,8 +424,18 @@ def get_city_data(city_info: dict) -> dict:
     lat = city_info.get("lat")
     lng = city_info.get("lng")
 
-    # Use demo data for AQI
-    pollutants = get_demo_aqi_data(city_name)
+    # Try live AQI data from WAQI first
+    is_live = False
+    pollutants = None
+    if lat and lng:
+        from services.live_aqi_service import fetch_live_aqi
+        pollutants = fetch_live_aqi(lat, lng)
+        if pollutants:
+            is_live = True
+
+    # Fall back to demo data if live data is unavailable
+    if not pollutants:
+        pollutants = get_demo_aqi_data(city_name)
 
     # Calculate AQI
     from services.aqi_calculator import calculate_aqi, get_health_recommendations, format_pollutant_display, get_health_risks
@@ -489,5 +514,5 @@ def get_city_data(city_info: dict) -> dict:
         "health_risks": health_risks,
         "historical": historical,
         "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "data_source": "demo"
+        "data_source": "live" if is_live else "demo"
     }

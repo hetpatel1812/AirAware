@@ -1,10 +1,10 @@
-﻿"""
+"""
 AirAware Dashboard — Flask Application
 Real-time Air Quality Index monitoring for Indian cities.
 """
 from dotenv import load_dotenv
-load_dotenv()
-
+load_dotenv(override=True)
+  
 import os
 import json
 import pickle
@@ -22,7 +22,7 @@ with open(os.path.join(DATA_DIR, 'cities.json'), 'r', encoding='utf-8') as f:
 
 # ─── Load chatbot model ─────────────────────────────────────
 try:
-    with open(os.path.join(CHATBOT_DIR, 'model.pkl'), 'rb') as f:
+    with open(os.path.join(CHATBOT_DIR, 'chatbot_model.pkl'), 'rb') as f:
         chatbot_model = pickle.load(f)
     with open(os.path.join(CHATBOT_DIR, 'vectorizer.pkl'), 'rb') as f:
         chatbot_vectorizer = pickle.load(f)
@@ -118,4 +118,4 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5000)

@@ -590,6 +590,17 @@ body {
     50% { opacity: 0.5; transform: scale(1.2); }
 }
 
+/* Demo Badge (when live API is unavailable) */
+.demo-badge {
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.demo-dot {
+    background: #fbbf24 !important;
+    animation: pulse 3s ease-in-out infinite !important;
+}
+
 /* Big AQI Display */
 .aqi-big-display {
     display: flex;

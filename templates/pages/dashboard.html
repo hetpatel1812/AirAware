@@ -87,10 +87,17 @@
             <div class="hero-container">
                 <div class="hero-main">
                     <!-- Live AQI Badge -->
+                    {% if city.data_source == 'live' %}
                     <div class="live-badge">
                         <span class="live-dot"></span>
                         Live AQI
                     </div>
+                    {% else %}
+                    <div class="live-badge demo-badge">
+                        <span class="live-dot demo-dot"></span>
+                        Demo AQI
+                    </div>
+                    {% endif %}
                     
                     <!-- Big AQI Value -->
                     <div class="aqi-big-display">
@@ -200,7 +207,14 @@
                     </svg>
                     <span>{{ city.city }}, {{ city.state }}, India</span>
                 </div>
-                <p class="update-time">Last updated: {{ city.last_updated }}</p>
+                <p class="update-time">
+                    Last updated: {{ city.last_updated }}
+                    {% if city.data_source == 'live' %}
+                    <span style="color: var(--aqi-accent); font-weight: 600;"> · Source: World Air Quality Index (WAQI)</span>
+                    {% else %}
+                    <span style="color: #fbbf24; font-weight: 600;"> · Source: Demo Data</span>
+                    {% endif %}
+                </p>
             </div>
         </section>
 
@@ -553,7 +567,7 @@
         const cityData = {{ city | tojson | safe }};
     </script>
     <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=3"></script>
     <script>
         // Scroll Reveal using Intersection Observer
         const scrollRevealObserver = new IntersectionObserver((entries) => {

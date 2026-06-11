@@ -1,9 +1,9 @@
 # 🌬️ AirAware — India AQI Dashboard
-  
+
 A comprehensive **Air Quality Index (AQI) monitoring web application** for Indian cities. Built with Flask, AirAware provides pollutant data, weather information, an interactive map, AQI-related news, and an AI-powered chatbot — all wrapped in a modern, animated UI.
 
----         
-        
+---
+
 ## ✨ Features
 
 ### 🏠 AQI Dashboard (Home)
@@ -263,6 +263,7 @@ Make sure your code is pushed to a GitHub repository. The project already includ
 
 ### 3. Configure Environment Variables
 In the Render Blueprint setup, you will be prompted to provide values for:
+- `WEATHER_API_KEY`: Your OpenWeatherMap API key.
 - `NEWSDATA_API_KEY`: Your NewsData.io API key.
 - `CPCB_API_KEY`: Your Central Pollution Control Board API key.
 

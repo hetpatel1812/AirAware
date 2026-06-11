@@ -1,0 +1,44 @@
+# Environment variables
+.env
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Virtual Environments
+venv/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# Logs and Databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python Distribution / Packages
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage

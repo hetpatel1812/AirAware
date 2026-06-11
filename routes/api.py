@@ -2,6 +2,7 @@
 API routes — data endpoints and chatbot.
 """
 import random
+import os
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 
@@ -139,12 +140,50 @@ def chat():
 
     data = request.json
     message = data.get('message', '')
+    history = data.get('history', [])
     context = data.get('context', {})
 
     if not message:
         return jsonify({'error': 'No message provided'}), 400
 
-    # Predict Intent
+    gemini_api_key = os.environ.get("GEMINI_API_KEY", "")
+    if gemini_api_key:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=gemini_api_key)
+            
+            system_instruction = "You are Namaste Air, an AI Air Quality assistant for India. You are concise, helpful, and health-conscious. Provide short and helpful responses. Do not use asterisks or markdown bolding excessively."
+            if context:
+                city_name = context.get('city', 'a city')
+                aqi_level = context.get('aqi', 'unknown')
+                category = context.get('category', 'unknown')
+                system_instruction += f" The user is currently looking at {city_name} where the AQI is {aqi_level} ({category}). Use this context if the user asks about the current location."
+            
+            model = genai.GenerativeModel('gemini-3.1-flash-lite', system_instruction=system_instruction)
+            chat_session = model.start_chat(history=history)
+            
+            response = chat_session.send_message(message)
+            
+            return jsonify({
+                'response': f"DEBUG_GEMINI_SUCCESS: {response.text}",
+                'tag': 'gemini'
+            })
+        except Exception as e:
+            import traceback
+            error_str = str(e).lower()
+            with open("error.log", "a") as f:
+                f.write(f"Gemini API error: {e}\n{traceback.format_exc()}\n")
+            
+            # Check if it's a rate limit / quota issue
+            if "429" in error_str or "quota" in error_str:
+                return jsonify({
+                    'response': "⚠️ **Google Gemini API Limit Reached!** You have exceeded your 20 free requests for today. I am temporarily falling back to my basic offline ML model. Please try again tomorrow or upgrade your API key.",
+                    'tag': 'gemini'
+                })
+            
+            print(f"Gemini API error: {e}, falling back to local ML model")
+            
+    # Predict Intent (Fallback)
     try:
         vec = chatbot_vectorizer.transform([message])
         tag = chatbot_model.predict(vec)[0]
@@ -178,7 +217,6 @@ def chat():
         elif tag == 'aqi_levels':
             response = f"{response} Currently, {city_name} is in the '{category}' category."
         elif tag == "health_impacts":
-            if isinstance(aqi_level, int) and aqi_level > 150:
-                response = f"With an AQI of {aqi_level} in {city_name}, the health risks are significant. {response}"
+            response = f"{response} Since {city_name} is '{category}', take necessary precautions."
 
     return jsonify({'response': response, 'tag': tag})
