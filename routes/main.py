@@ -20,8 +20,8 @@ def favicon():
 
 @main_bp.route('/')
 def home():
-    """Home page — shows Delhi AQI by default."""
-    return render_city_page('delhi-aqi')
+    """Home page — shows Ahmedabad AQI by default."""
+    return render_city_page('ahmedabad-aqi')
 
 
 @main_bp.route('/maps')
@@ -92,12 +92,12 @@ def render_city_page(city_slug: str):
     city_info = find_city(city_slug)
 
     if not city_info:
-        city_info = find_city('delhi-aqi')
+        city_info = find_city('ahmedabad-aqi')
 
     city_data = get_city_data(city_info)
 
     top_cities = [
-        find_city('delhi-aqi'),
+        find_city('ahmedabad-aqi'),
         find_city('mumbai-aqi'),
         find_city('bengaluru-aqi'),
         find_city('kolkata-aqi'),

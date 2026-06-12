@@ -5,7 +5,7 @@
       "slug": "delhi",
       "isUT": true,
       "cities": [
-        {"name": "Delhi", "slug": "delhi-aqi", "lat": 28.6139, "lng": 77.2090, "isCapital": true, "isDefault": true}
+        {"name": "Delhi", "slug": "delhi-aqi", "lat": 28.6139, "lng": 77.2090, "isCapital": true}
       ]
     },
     {
@@ -80,7 +80,7 @@
       "slug": "gujarat",
       "isUT": false,
       "cities": [
-        {"name": "Ahmedabad", "slug": "ahmedabad-aqi", "lat": 23.0225, "lng": 72.5714},
+        {"name": "Ahmedabad", "slug": "ahmedabad-aqi", "lat": 23.0225, "lng": 72.5714, "isDefault": true},
         {"name": "Surat", "slug": "surat-aqi", "lat": 21.1702, "lng": 72.8311},
         {"name": "Vadodara", "slug": "vadodara-aqi", "lat": 22.3072, "lng": 73.1812},
         {"name": "Rajkot", "slug": "rajkot-aqi", "lat": 22.3039, "lng": 70.8022},
