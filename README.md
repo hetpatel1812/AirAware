@@ -260,7 +260,6 @@ Make sure your code is pushed to a GitHub repository. The project already includ
 
 ### 3. Configure Environment Variables
 In the Render Blueprint setup, provide values for:
-- `WEATHER_API_KEY`: Your OpenWeatherMap API key.
 - `NEWSDATA_API_KEY`: Your NewsData.io API key.
 - `WAQI_API_TOKEN`: Your WAQI API token (get one free at [aqicn.org](https://aqicn.org/data-platform/token/)).
 - `GEMINI_API_KEY`: Your Google Gemini API key (optional, for advanced chatbot support).
