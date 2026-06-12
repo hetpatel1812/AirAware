@@ -104,6 +104,9 @@ def calculate_aqi(pollutants: dict) -> dict:
     """
     sub_indices = {}
     
+    # Copy dictionary to prevent mutating cached objects
+    pollutants = dict(pollutants)
+    
     # Check if these are already AQI values (e.g. from WAQI)
     is_precalculated = pollutants.pop('is_precalculated_aqi', False)
     main_aqi = pollutants.pop('main_aqi', None)
