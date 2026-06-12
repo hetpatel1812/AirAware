@@ -161,7 +161,6 @@ pip install scikit-learn
 Configure your API keys in the `.env` file (or environment variables):
 
 ```env
-WEATHER_API_KEY=your_openweathermap_api_key
 NEWSDATA_API_KEY=your_newsdata_api_key
 WAQI_API_TOKEN=your_waqi_api_key
 GEMINI_API_KEY=your_google_gemini_api_key
