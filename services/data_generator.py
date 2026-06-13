@@ -481,6 +481,8 @@ def get_city_data(city_info: dict) -> dict:
     # Format pollutants for display
     pollutants_display = []
     for key, value in pollutants.items():
+        if key in ['is_precalculated_aqi', 'main_aqi']:
+            continue
         if value is not None:
             display = format_pollutant_display(key)
             pollutants_display.append({
